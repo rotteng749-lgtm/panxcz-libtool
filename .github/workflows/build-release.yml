@@ -32,32 +32,18 @@ jobs:
             APP_ABI=arm64-v8a \
             -j4
 
-      - name: Build armeabi-v7a
-        run: |
-          ${{ steps.ndk.outputs.ndk-path }}/ndk-build \
-            NDK_PROJECT_PATH=. \
-            APP_BUILD_SCRIPT=./jni/Android.mk \
-            NDK_APPLICATION_MK=./jni/Application.mk \
-            NDK_OUT=./obj-arm \
-            NDK_LIBS_OUT=./libs-arm \
-            APP_ABI=armeabi-v7a \
-            -j4
-
       - name: Stage artifacts
         run: |
-          mkdir -p artifacts/arm64-v8a artifacts/armeabi-v7a
+          mkdir -p artifacts/arm64-v8a
           cp libs-arm64/arm64-v8a/panxcz_libtool artifacts/arm64-v8a/panxcz_libtool.sh
           cp libs-arm64/arm64-v8a/panxcz_libtool artifacts/arm64-v8a/panxcz_libtool.elf
           cp libs-arm64/arm64-v8a/panxcz_libtool artifacts/arm64-v8a/panxcz_libtool
-          cp libs-arm/armeabi-v7a/panxcz_libtool artifacts/armeabi-v7a/panxcz_libtool.sh
-          cp libs-arm/armeabi-v7a/panxcz_libtool artifacts/armeabi-v7a/panxcz_libtool.elf
-          cp libs-arm/armeabi-v7a/panxcz_libtool artifacts/armeabi-v7a/panxcz_libtool
-          chmod +x artifacts/arm64-v8a/* artifacts/armeabi-v7a/*
+          chmod +x artifacts/arm64-v8a/*
 
       - name: Verify 16KB page alignment
         run: |
           echo "=== 16KB page-size check ==="
-          for f in artifacts/arm64-v8a/*.so artifacts/armeabi-v7a/*.so artifacts/arm64-v8a/panxcz_libtool* artifacts/armeabi-v7a/panxcz_libtool*; do
+          for f in artifacts/arm64-v8a/panxcz_libtool*; do
             [ -f "$f" ] || continue
             echo "--- $f ---"
             readelf -lW "$f" | grep LOAD | while read line; do
@@ -77,7 +63,7 @@ jobs:
             echo "--- $map ---"
             for sym in $(grep -v '^#' "$map" | awk '{print $2}'); do
               found=0
-              for f in artifacts/arm64-v8a/* artifacts/armeabi-v7a/*; do
+              for f in artifacts/arm64-v8a/*; do
                 [ -f "$f" ] || continue
                 if readelf --dyn-syms -W "$f" 2>/dev/null | grep -q " ${sym}$"; then
                   found=1; break
@@ -96,7 +82,6 @@ jobs:
           VERSION=$(git describe --tags --always)
           mkdir -p release
           tar -czf release/panxcz-libtool-${VERSION}-arm64.tar.gz -C artifacts/arm64-v8a .
-          tar -czf release/panxcz-libtool-${VERSION}-arm.tar.gz -C artifacts/armeabi-v7a .
           ls -lh release/
 
       - name: Upload artifacts
