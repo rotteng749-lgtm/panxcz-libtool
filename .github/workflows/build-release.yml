@@ -5,10 +5,6 @@ on:
     tags: ['v*']
   workflow_dispatch:
 
-env:
-  NDK_VERSION: r28b
-  NDK_URL: https://dl.google.com/android/repository/android-ndk-${NDK_VERSION}-linux.zip
-
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -16,11 +12,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install NDK
-        run: |
-          wget -q "${NDK_URL}" -O /tmp/ndk.zip
-          unzip -q /tmp/ndk.zip -d /opt
-          echo "NDK_HOME=/opt/android-ndk-${NDK_VERSION}" >> $GITHUB_ENV
+      - name: Setup NDK
+        uses: android-actions/setup-ndk@v2
+        with:
+          ndk-version: r28b
 
       - name: Build arm64-v8a
         run: |
