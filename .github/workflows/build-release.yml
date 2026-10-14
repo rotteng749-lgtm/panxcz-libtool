@@ -5,6 +5,10 @@ on:
     tags: ['v*']
   workflow_dispatch:
 
+permissions:
+  contents: write
+  packages: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -46,8 +50,6 @@ jobs:
           for f in artifacts/arm64-v8a/panxcz_libtool*; do
             [ -f "$f" ] || continue
             echo "--- $f ---"
-            # readelf -lW output: LOAD ... 0x... 0x... 0x... 0x... RWE 0x1000
-            # or: LOAD ... 0x... 0x... 0x... 0x... RWE 0x4000
             readelf -lW "$f" | awk '/LOAD/ {for(i=1;i<=NF;i++) if($i ~ /^0x/) align=$i} END {if(align=="0x4000") print "PASS"; else {print "FAIL: " align; exit 1}}' || exit 1
           done
           echo "ALL PASS: every LOAD segment aligned to 16KB"
