@@ -86,14 +86,14 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: panxcz-libtool-${{ github.ref_name }}
-          path: release/
+          path: panxcz-libtool/release/
           retention-days: 90
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/tags/v')
         with:
-          files: release/*
+          files: panxcz-libtool/release/*
           generate_release_notes: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
