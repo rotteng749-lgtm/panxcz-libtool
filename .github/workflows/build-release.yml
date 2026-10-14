@@ -16,10 +16,11 @@ jobs:
         uses: nttld/setup-ndk@v1
         with:
           ndk-version: r28b
+        id: ndk
 
       - name: Build arm64-v8a
         run: |
-          ${NDK_HOME}/ndk-build \
+          ${{ steps.ndk.outputs.ndk-path }}/ndk-build \
             NDK_PROJECT_PATH=. \
             APP_BUILD_SCRIPT=./jni/Android.mk \
             NDK_APPLICATION_MK=./jni/Application.mk \
@@ -30,7 +31,7 @@ jobs:
 
       - name: Build armeabi-v7a
         run: |
-          ${NDK_HOME}/ndk-build \
+          ${{ steps.ndk.outputs.ndk-path }}/ndk-build \
             NDK_PROJECT_PATH=. \
             APP_BUILD_SCRIPT=./jni/Android.mk \
             NDK_APPLICATION_MK=./jni/Application.mk \
