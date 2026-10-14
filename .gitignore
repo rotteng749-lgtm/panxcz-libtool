@@ -1,1 +1,37 @@
-ioctl-codex/
+# Build artifacts
+/obj/
+/libs/
+/out/
+*.o
+*.a
+*.so
+
+# NDK (CI downloads its own)
+/ndk/
+*.zip
+
+# Local scratch
+/sdcard-dumps/
+/test-game/
+
+# Editor / OS
+.DS_Store
+*.swp
+
+# Other projects / large binaries (not part of this repo)
+/ioctl-codex/
+/panxcz-mlbb-dist/
+/ffmax/
+/dump/
+/dumps/
+/_meta_analysis/
+/node_modules/
+package-lock.json
+package.json
+*.7z
+*.zip
+*.deb
+*.whl
+*.bak
+*.o
+*.so
